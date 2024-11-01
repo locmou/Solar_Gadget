@@ -1,52 +1,62 @@
 #include <Arduino.h>
 
-#define NUM_OF_DIGITS 4
 
-int latch = 4; //74HC595  pin 9 STCP
-int cs = 5; //74HC595  pin 10 SHCP
-int data = 3; //74HC595  pin 8 DS
-int dPins[4] = {11, 10, 9, 8};
+#include "SevSeg.h" // La librairie 7 segments
+SevSeg sept_segments; // On appel la librairie
 
-//  DP G F E D C B A
-//0: 1 1 0 0 0 0 0 0 0xc0
-//1: 1 1 1 1 1 0 0 1 0xf9
-//2: 1 0 1 0 0 1 0 0 0xa4
-//3: 1 0 1 1 0 0 0 0 0xb0
-//4: 1 0 0 1 1 0 0 1 0x99
-//5: 1 0 0 1 0 0 1 0 0x92
-//6: 1 0 0 0 0 0 1 0 0x82
-//7: 1 1 1 1 1 0 0 0 0xf8
-//8: 1 0 0 0 0 0 0 0 0x80
-//9: 1 0 0 1 0 0 0 0 0x90
-unsigned char table[] =
-{0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90};
+void setup(){
+  byte nombre_chiffre_7_segments = 4; // Nombre de digit de votre 7 segments
+  // Les broches de votre 7 segments
+  byte Broche_pins[] = {10, 11, 12, 13};
+  byte segmentPins[] = {9, 2, 3, 5, 6, 8, 7, 4};
+
+  bool resistance_sur_Segments = true; // On applique une résistance sur chaque segment 
+  bool pause_entre_mise_a_jour = true; // On fait une mini pause entre chaque segment
+  byte configuration_materiel = COMMON_CATHODE; // On fait un 7 segments a cathode commune
+  sept_segments.begin(configuration_materiel, nombre_chiffre_7_segments, Broche_pins, segmentPins, resistance_sur_Segments); // On initialize l'afficheur 7 segments
+  sept_segments.setBrightness(90); // On initialize la luminosité de l'afficheur
+}
+
+void loop(){
+    sept_segments.setNumber(45); // On assigne le nombre 16 à l'afficheur 7 segments
+    sept_segments.refreshDisplay(); // On rafraichit l'affichage pour que le nouveau nombre soit pris en compte
+}
+/*
 
 void setup() {
-  Serial.begin(115200);
-  pinMode(latch, OUTPUT);
-  pinMode(cs, OUTPUT);
-  pinMode(data, OUTPUT);
-  for (int j = 0; j < NUM_OF_DIGITS; j++) pinMode(dPins[j], OUTPUT);
+  // put your setup code here, to run once:
+
 }
 
 void loop() {
-  //Count from 0 to 9 on each digit
-  for (int i = 0; i < NUM_OF_DIGITS; i++) {
-    for (int j = 0; j < 10; j++) {
-      Display(i, j);
-      delay(500);
-      Serial.println(j);
-    }
-    delay(500);
-  }
+digitalWrite(13,HIGH);
+delay(250);
+digitalWrite(13,LOW);
+delay(250);
+
 }
 
-void Display(int id, unsigned char num)
+
+void setup()
 {
-  digitalWrite(latch, LOW);
-  shiftOut(data, cs, MSBFIRST, table[num]);
-  digitalWrite(latch, HIGH);
-  for (int j = 0; j < NUM_OF_DIGITS; j++) digitalWrite(dPins[j], LOW);
-  digitalWrite(dPins[id], HIGH);
+    Serial.begin(9600);
 }
 
+void loop()
+{
+    // variable contenant le caractère à lire
+    char carlu = 0;
+    // variable contenant le nombre de caractère disponibles dans le buffer
+    int cardispo = 0;
+
+    cardispo = Serial.available();
+
+    while(cardispo > 0) // tant qu'il y a des caractères à lire
+    {
+        carlu = Serial.read(); // on lit le caractère
+        Serial.print(carlu); // puis on le renvoi à l’expéditeur tel quel
+        cardispo = Serial.available(); // on relit le nombre de caractères dispo
+    }
+    // fin du programme
+}
+*/
