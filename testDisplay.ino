@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /* SevSeg testDisplay
  
  Copyright 2023 Dean Reading
